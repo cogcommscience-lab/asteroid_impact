@@ -152,12 +152,16 @@ class GameModeManager(object):
                 if isinstance(self.script_json, list):
                     self.gamesteps = self.script_json
                     self.script_json = dict(steps=self.gamesteps)
-                else:
+                elif "stepgroups" in self.script_json:
                     self.stepgroups = self.script_json['stepgroups']
                     self.gamesteps = []
                     for stepgroup in self.stepgroups:
                         for step in stepgroup['steps']:
                             self.gamesteps.append(step)
+                else:
+                    self.gamesteps = []
+                    for step in self.script_json['steps']:
+                        self.gamesteps.append(step)
 
             if self.args.levels_json != None or self.args.single_level_json != None:
                 print ('Error: When specifying script json you must specify levels in ' +
@@ -493,15 +497,17 @@ class GameModeManager(object):
                 return
 
         # number steps in original order:
-        if self.stepgroups:
+        if self.script_json.has_key('group_shuffle_groups'):
             for i, s in enumerate(self.stepgroups):
                 s['groupnumber'] = i + 1
+        else:
+            pass
         for i, s in enumerate(self.gamesteps):
             s['stepnumber'] = i + 1
         if self.script_json.has_key('group_shuffle_groups'):
             if not isinstance(self.script_json['group_shuffle_groups'], list):
                 print
-                'group_shuffle_groups must be list of list of numbers'
+                'group_shuffle_groups must be list of lists of numbers'
                 print
                 'exiting.'
 
@@ -511,11 +517,13 @@ class GameModeManager(object):
                     'group_shuffle_groups must be list of lists of numbers'
                     print
                     'exiting.'
-            # group_shuffle_groups specifies a list of "shuffle groups" for groups in the json (defined using 'stepgroups')
-            # each shuffle group is a list of group numbers, 1-based indexes for original group position in the json
-            # first we number the groups, then we iterate through each group of groups and shuffle only groups with those original group numbers
+            # group_shuffle_groups specifies a list of "shuffle groups"
+            # for groups in the json (defined using 'stepgroups')
+            # each shuffle group is a list of group numbers, 1-based indexes
+            # for original group position in the json
+            # first we number the groups, then we iterate through each group of groups
+            # and shuffle only groups with those original group numbers
             rnd = random.Random()
-            # todo: verify self.script_json['step_randomization_groups'] is list of list of numbers
             stepgroups_old = self.stepgroups
             for g_numbers in self.script_json['group_shuffle_groups']:
                 stepgroups_new = []
@@ -550,7 +558,8 @@ class GameModeManager(object):
                         'step_shuffle_groups must be list of lists of numbers'
                         print
                         'exiting.'
-                # step_shuffle_groups specifies a list of "shuffle groups" for steps in the JSON (defined using 'steps')
+                # step_shuffle_groups specifies a list of "shuffle groups"
+                # for steps in the JSON (defined using 'steps')
                 # each shuffle group is a list of step numbers, 1-based indexes for original step position
                 # first we number the steps
                 # then we iterate through each group and shuffle only steps with those original step numbers
