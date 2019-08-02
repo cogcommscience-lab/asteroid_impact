@@ -1398,12 +1398,12 @@ class AsteroidImpactInfiniteGameplayScreen(GameScreen):
         self.gamebackground = load_image('background4x3.jpg', size=virtualdisplay.screenplayarea.size)
         # draw gamebackground on blackbackground to only have to draw black/game once per frame:
         self.blackbackground.blit(self.gamebackground, virtualdisplay.screenarea.topleft)
-        self.mondrian = load_image('mond.png', size=virtualdisplay.screenarea.size)
+        try:
+            self.mondrian = load_image('mond.png', size=virtualdisplay.screenarea.size)
+        except:
+            self.mondrian = None
         self.blank = load_image("transparent.png", size=virtualdisplay.screenarea.size)
-        self.overlay = None,
-
-        # draw outline around game area
-        # pygame.draw.rect(self.blackbackground, (250, 250, 250), virtualdisplay.screenplayarea, 1)
+        self.overlay = None
 
         status_font_size = virtualdisplay.screenrect_from_gamerect(
             pygame.Rect(0, 0, 64, 64)).height

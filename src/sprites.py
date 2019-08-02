@@ -881,7 +881,6 @@ class Overlay(VirtualGameSprite):
             lifetime_millis_elapsed=0,
             w=virtualdisplay.screenplayarea.width,
             h=virtualdisplay.screenplayarea.height,
-            image='mond.png',
             visible=0,
             **kwargs_extra):
         # if kwargs_extra: print 'extra arguments:', kwargs_extra
